@@ -1,5 +1,5 @@
-import 'package:appcenter_sdk_flutter/appcenter_sdk_flutter.dart';
-import 'package:appcenter_sdk_flutter/src/appcenter_crashes/appcenter_crashes_method_channel.dart';
+import 'package:appcenter/appcenter.dart';
+import 'package:appcenter/src/appcenter_crashes/appcenter_crashes_method_channel.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -14,8 +14,7 @@ void main() {
       test('generateTestCrash', () async {
         final api = AppCenterCrashesApiMock();
         when(api.generateTestCrash).thenAnswer((final _) async => Future<void>);
-        AppCenterCrashes.instance =
-            AppCenterCrashesMethodChannel.internal(api: api);
+        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
         await AppCenterCrashes.generateTestCrash();
 
@@ -25,13 +24,10 @@ void main() {
       test('hasReceivedMemoryWarningInLastSession return true', () async {
         final api = AppCenterCrashesApiMock();
         const expected = true;
-        when(api.hasReceivedMemoryWarningInLastSession)
-            .thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance =
-            AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.hasReceivedMemoryWarningInLastSession).thenAnswer((final _) async => expected);
+        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
-        final value =
-            await AppCenterCrashes.hasReceivedMemoryWarningInLastSession();
+        final value = await AppCenterCrashes.hasReceivedMemoryWarningInLastSession();
 
         expect(value, expected);
         verify(api.hasReceivedMemoryWarningInLastSession).called(1);
@@ -40,13 +36,10 @@ void main() {
       test('hasReceivedMemoryWarningInLastSession return false', () async {
         final api = AppCenterCrashesApiMock();
         const expected = false;
-        when(api.hasReceivedMemoryWarningInLastSession)
-            .thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance =
-            AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.hasReceivedMemoryWarningInLastSession).thenAnswer((final _) async => expected);
+        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
-        final value =
-            await AppCenterCrashes.hasReceivedMemoryWarningInLastSession();
+        final value = await AppCenterCrashes.hasReceivedMemoryWarningInLastSession();
 
         expect(value, expected);
         verify(api.hasReceivedMemoryWarningInLastSession).called(1);
@@ -55,10 +48,8 @@ void main() {
       test('hasCrashedInLastSession return true', () async {
         final api = AppCenterCrashesApiMock();
         const expected = true;
-        when(api.hasCrashedInLastSession)
-            .thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance =
-            AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.hasCrashedInLastSession).thenAnswer((final _) async => expected);
+        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
         final value = await AppCenterCrashes.hasCrashedInLastSession();
 
@@ -69,10 +60,8 @@ void main() {
       test('hasCrashedInLastSession return false', () async {
         final api = AppCenterCrashesApiMock();
         const expected = false;
-        when(api.hasCrashedInLastSession)
-            .thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance =
-            AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.hasCrashedInLastSession).thenAnswer((final _) async => expected);
+        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
         final value = await AppCenterCrashes.hasCrashedInLastSession();
 
@@ -82,10 +71,8 @@ void main() {
 
       test('enable', () async {
         final api = AppCenterCrashesApiMock();
-        when(() => api.crashesSetEnabled(any()))
-            .thenAnswer((final _) async => Future<void>);
-        AppCenterCrashes.instance =
-            AppCenterCrashesMethodChannel.internal(api: api);
+        when(() => api.crashesSetEnabled(any())).thenAnswer((final _) async => Future<void>);
+        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
         await AppCenterCrashes.enable();
 
@@ -94,10 +81,8 @@ void main() {
 
       test('disable', () async {
         final api = AppCenterCrashesApiMock();
-        when(() => api.crashesSetEnabled(any()))
-            .thenAnswer((final _) async => Future<void>);
-        AppCenterCrashes.instance =
-            AppCenterCrashesMethodChannel.internal(api: api);
+        when(() => api.crashesSetEnabled(any())).thenAnswer((final _) async => Future<void>);
+        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
         await AppCenterCrashes.disable();
 
@@ -108,8 +93,7 @@ void main() {
         final api = AppCenterCrashesApiMock();
         const expected = true;
         when(api.crashesIsEnabled).thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance =
-            AppCenterCrashesMethodChannel.internal(api: api);
+        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
         final value = await AppCenterCrashes.isEnabled();
 
@@ -121,8 +105,7 @@ void main() {
         final api = AppCenterCrashesApiMock();
         const expected = false;
         when(api.crashesIsEnabled).thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance =
-            AppCenterCrashesMethodChannel.internal(api: api);
+        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
         final value = await AppCenterCrashes.isEnabled();
 
@@ -132,10 +115,8 @@ void main() {
 
       test('trackException', () async {
         final api = AppCenterCrashesApiMock();
-        when(() => api.trackException(any(), any(), any(), any()))
-            .thenAnswer((final _) async => Future<void>);
-        AppCenterCrashes.instance =
-            AppCenterCrashesMethodChannel.internal(api: api);
+        when(() => api.trackException(any(), any(), any(), any())).thenAnswer((final _) async => Future<void>);
+        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
         final exception = Exception('Message');
         const stackTraceString = 'I am a stack trace.';

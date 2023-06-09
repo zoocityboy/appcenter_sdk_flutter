@@ -1,12 +1,13 @@
-import 'package:appcenter_sdk_flutter/src/appcenter/appcenter_platform_interface.dart';
 import 'package:meta/meta.dart';
+
+import 'appcenter_platform_interface.dart';
 
 /// [AppCenter]
 class AppCenter {
   @visibleForTesting
   // Because
   // ignore: avoid_setters_without_getters
-  static set instance(final AppCenterPlatformInterface instance) {
+  static set instance(AppCenterPlatformInterface instance) {
     AppCenterPlatformInterface.instance = instance;
   }
 
@@ -16,8 +17,16 @@ class AppCenter {
   /// This may be called only once per application process lifetime.
   ///
   /// [secret] – A unique and secret key used to identify the application.
-  static Future<void> start({required final String secret}) =>
-      AppCenterPlatformInterface.instance.start(secret: secret);
+  static Future<void> start({
+    required String secret,
+    required bool usePrivateTrack,
+  }) =>
+      AppCenterPlatformInterface.instance
+          .start(secret: secret, usePrivateTrack: usePrivateTrack);
+
+  ///
+  static Future<void> setLogLevel(int value) =>
+      AppCenterPlatformInterface.instance.setLogLevel(value);
 
   /// Enable the SDK as a whole.
   static Future<void> enable() => AppCenterPlatformInterface.instance.enable();
@@ -52,4 +61,10 @@ class AppCenter {
   /// test dependencies in release).
   static Future<bool> isRunningInAppCenterTestCloud() =>
       AppCenterPlatformInterface.instance.isRunningInAppCenterTestCloud();
+
+  /// Check app performance on calculating fibonacci number
+  ///
+  /// only for testing purposes
+  static Future<int> fibonacci(int n) =>
+      AppCenterPlatformInterface.instance.fibonacci(n);
 }

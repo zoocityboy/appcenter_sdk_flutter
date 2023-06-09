@@ -1,4 +1,4 @@
-package fr.lsaudon.appcenter_sdk_flutter_example
+package zoo.cityboy.appcenter_example
 
 import io.flutter.embedding.android.FlutterActivity
 

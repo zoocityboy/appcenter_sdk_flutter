@@ -1,6 +1,7 @@
-import 'package:appcenter_sdk_flutter/src/appcenter/appcenter_platform_interface.dart';
-import 'package:appcenter_sdk_flutter/src/messages.g.dart';
 import 'package:meta/meta.dart';
+
+import '../messages.g.dart';
+import 'appcenter_platform_interface.dart';
 
 /// The method channel implementation of [AppCenterPlatformInterface].
 class AppCenterMethodChannel extends AppCenterPlatformInterface {
@@ -10,14 +11,19 @@ class AppCenterMethodChannel extends AppCenterPlatformInterface {
 
   /// Creates a new [AppCenterMethodChannel] instance for unit tests.
   @visibleForTesting
-  AppCenterMethodChannel.internal({required final AppCenterApi api})
-      : _api = api;
+  AppCenterMethodChannel.internal({required AppCenterApi api}) : _api = api;
 
   final AppCenterApi _api;
 
   @override
-  Future<void> start({required final String secret}) async =>
-      _api.start(secret);
+  Future<void> start({
+    required String secret,
+    bool usePrivateTrack = false,
+  }) async =>
+      _api.start(secret, usePrivateTrack);
+
+  @override
+  Future<void> setLogLevel(int value) => _api.setLogLevel(value);
 
   @override
   Future<void> enable() async => _api.setEnabled(true);
@@ -37,4 +43,7 @@ class AppCenterMethodChannel extends AppCenterPlatformInterface {
   @override
   Future<bool> isRunningInAppCenterTestCloud() async =>
       _api.isRunningInAppCenterTestCloud();
+
+  @override
+  Future<int> fibonacci(int n) async => _api.fibonacci(n);
 }

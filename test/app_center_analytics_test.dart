@@ -1,5 +1,5 @@
-import 'package:appcenter_sdk_flutter/appcenter_sdk_flutter.dart';
-import 'package:appcenter_sdk_flutter/src/appcenter_analytics/appcenter_analytics_method_channel.dart';
+import 'package:appcenter/appcenter.dart';
+import 'package:appcenter/src/appcenter_analytics/appcenter_analytics_method_channel.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -13,10 +13,8 @@ void main() {
     () {
       test('trackEvent', () async {
         final api = AppCenterAnalyticsApiMock();
-        when(() => api.trackEvent(any(), any(), any()))
-            .thenAnswer((final _) async => Future<void>);
-        AppCenterAnalytics.instance =
-            AppCenterAnalyticsMethodChannel.internal(api: api);
+        when(() => api.trackEvent(any(), any(), any())).thenAnswer((final _) async => Future<void>);
+        AppCenterAnalytics.instance = AppCenterAnalyticsMethodChannel.internal(api: api);
 
         await AppCenterAnalytics.trackEvent(
           name: 'Name',
@@ -24,15 +22,13 @@ void main() {
           flags: 1,
         );
 
-        verify(() => api.trackEvent('Name', {'Property': 'Value'}, 1))
-            .called(1);
+        verify(() => api.trackEvent('Name', {'Property': 'Value'}, 1)).called(1);
       });
 
       test('pause', () async {
         final api = AppCenterAnalyticsApiMock();
         when(api.pause).thenAnswer((final _) async => Future<void>);
-        AppCenterAnalytics.instance =
-            AppCenterAnalyticsMethodChannel.internal(api: api);
+        AppCenterAnalytics.instance = AppCenterAnalyticsMethodChannel.internal(api: api);
 
         await AppCenterAnalytics.pause();
 
@@ -42,8 +38,7 @@ void main() {
       test('resume', () async {
         final api = AppCenterAnalyticsApiMock();
         when(api.resume).thenAnswer((final _) async => Future<void>);
-        AppCenterAnalytics.instance =
-            AppCenterAnalyticsMethodChannel.internal(api: api);
+        AppCenterAnalytics.instance = AppCenterAnalyticsMethodChannel.internal(api: api);
 
         await AppCenterAnalytics.resume();
 
@@ -52,10 +47,8 @@ void main() {
 
       test('enable', () async {
         final api = AppCenterAnalyticsApiMock();
-        when(() => api.analyticsSetEnabled(any()))
-            .thenAnswer((final _) async => Future<void>);
-        AppCenterAnalytics.instance =
-            AppCenterAnalyticsMethodChannel.internal(api: api);
+        when(() => api.analyticsSetEnabled(any())).thenAnswer((final _) async => Future<void>);
+        AppCenterAnalytics.instance = AppCenterAnalyticsMethodChannel.internal(api: api);
 
         await AppCenterAnalytics.enable();
 
@@ -64,10 +57,8 @@ void main() {
 
       test('disable', () async {
         final api = AppCenterAnalyticsApiMock();
-        when(() => api.analyticsSetEnabled(any()))
-            .thenAnswer((final _) async => Future<void>);
-        AppCenterAnalytics.instance =
-            AppCenterAnalyticsMethodChannel.internal(api: api);
+        when(() => api.analyticsSetEnabled(any())).thenAnswer((final _) async => Future<void>);
+        AppCenterAnalytics.instance = AppCenterAnalyticsMethodChannel.internal(api: api);
 
         await AppCenterAnalytics.disable();
 
@@ -78,8 +69,7 @@ void main() {
         final api = AppCenterAnalyticsApiMock();
         const expected = true;
         when(api.analyticsIsEnabled).thenAnswer((final _) async => expected);
-        AppCenterAnalytics.instance =
-            AppCenterAnalyticsMethodChannel.internal(api: api);
+        AppCenterAnalytics.instance = AppCenterAnalyticsMethodChannel.internal(api: api);
 
         final value = await AppCenterAnalytics.isEnabled();
 
@@ -91,8 +81,7 @@ void main() {
         final api = AppCenterAnalyticsApiMock();
         const expected = false;
         when(api.analyticsIsEnabled).thenAnswer((final _) async => expected);
-        AppCenterAnalytics.instance =
-            AppCenterAnalyticsMethodChannel.internal(api: api);
+        AppCenterAnalytics.instance = AppCenterAnalyticsMethodChannel.internal(api: api);
 
         final value = await AppCenterAnalytics.isEnabled();
 
@@ -102,10 +91,8 @@ void main() {
 
       test('enableManualSessionTracker', () async {
         final api = AppCenterAnalyticsApiMock();
-        when(api.enableManualSessionTracker)
-            .thenAnswer((final _) async => Future<void>);
-        AppCenterAnalytics.instance =
-            AppCenterAnalyticsMethodChannel.internal(api: api);
+        when(api.enableManualSessionTracker).thenAnswer((final _) async => Future<void>);
+        AppCenterAnalytics.instance = AppCenterAnalyticsMethodChannel.internal(api: api);
 
         await AppCenterAnalytics.enableManualSessionTracker();
 
@@ -115,8 +102,7 @@ void main() {
       test('startSession', () async {
         final api = AppCenterAnalyticsApiMock();
         when(api.startSession).thenAnswer((final _) async => Future<void>);
-        AppCenterAnalytics.instance =
-            AppCenterAnalyticsMethodChannel.internal(api: api);
+        AppCenterAnalytics.instance = AppCenterAnalyticsMethodChannel.internal(api: api);
 
         await AppCenterAnalytics.startSession();
 
@@ -126,10 +112,8 @@ void main() {
       test('setTransmissionInterval', () async {
         final api = AppCenterAnalyticsApiMock();
         const expected = true;
-        when(() => api.setTransmissionInterval(any()))
-            .thenAnswer((final _) async => expected);
-        AppCenterAnalytics.instance =
-            AppCenterAnalyticsMethodChannel.internal(api: api);
+        when(() => api.setTransmissionInterval(any())).thenAnswer((final _) async => expected);
+        AppCenterAnalytics.instance = AppCenterAnalyticsMethodChannel.internal(api: api);
 
         const seconds = 3;
         final value = await AppCenterAnalytics.setTransmissionInterval(seconds);

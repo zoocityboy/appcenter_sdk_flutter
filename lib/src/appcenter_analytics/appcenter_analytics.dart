@@ -1,5 +1,6 @@
-import 'package:appcenter_sdk_flutter/src/appcenter_analytics/appcenter_analytics_platform_interface.dart';
 import 'package:meta/meta.dart';
+
+import 'appcenter_analytics_platform_interface.dart';
 
 /// [AppCenterAnalytics]
 class AppCenterAnalytics {

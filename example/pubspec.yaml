@@ -1,16 +1,19 @@
-name: appcenter_sdk_flutter_example
-description: Demonstrates how to use the appcenter_sdk_flutter plugin.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+name: appcenter_example
+description: AppCenter testing example app.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 0.0.1
 
 environment:
-  sdk: '>=2.18.5 <3.0.0'
+  sdk: ">=2.18.5"
 
 dependencies:
-  appcenter_sdk_flutter:
+  appcenter:
     path: ../
+  faker: ^2.1.0
   flutter:
     sdk: flutter
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/

@@ -1,6 +1,6 @@
-# appcenter_sdk_flutter_example
+# appcenter_example
 
-Demonstrates how to use the appcenter_sdk_flutter plugin.
+Demonstrates how to use the appcenter plugin.
 
 ## Getting Started
 

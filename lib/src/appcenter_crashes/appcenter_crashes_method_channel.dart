@@ -1,12 +1,11 @@
-import 'package:appcenter_sdk_flutter/src/appcenter_crashes/appcenter_crashes_platform_interface.dart';
-import 'package:appcenter_sdk_flutter/src/messages.g.dart';
+import 'package:appcenter/src/appcenter_crashes/appcenter_crashes_platform_interface.dart';
+import 'package:appcenter/src/messages.g.dart';
 import 'package:meta/meta.dart';
 
 /// The method channel implementation of [AppCenterCrashesPlatformInterface].
 class AppCenterCrashesMethodChannel extends AppCenterCrashesPlatformInterface {
   /// Creates a new [AppCenterCrashesMethodChannel] instance.
-  factory AppCenterCrashesMethodChannel() =>
-      AppCenterCrashesMethodChannel.internal(api: AppCenterCrashesApi());
+  factory AppCenterCrashesMethodChannel() => AppCenterCrashesMethodChannel.internal(api: AppCenterCrashesApi());
 
   /// Creates a new [AppCenterCrashesMethodChannel] instance for unit tests.
   @visibleForTesting
@@ -20,12 +19,10 @@ class AppCenterCrashesMethodChannel extends AppCenterCrashesPlatformInterface {
   Future<void> generateTestCrash() async => _api.generateTestCrash();
 
   @override
-  Future<bool> hasReceivedMemoryWarningInLastSession() async =>
-      _api.hasReceivedMemoryWarningInLastSession();
+  Future<bool> hasReceivedMemoryWarningInLastSession() async => _api.hasReceivedMemoryWarningInLastSession();
 
   @override
-  Future<bool> hasCrashedInLastSession() async =>
-      _api.hasCrashedInLastSession();
+  Future<bool> hasCrashedInLastSession() async => _api.hasCrashedInLastSession();
 
   @override
   Future<void> enable() async => _api.crashesSetEnabled(true);

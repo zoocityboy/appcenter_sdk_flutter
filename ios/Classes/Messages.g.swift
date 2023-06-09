@@ -36,12 +36,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol AppCenterApi {
-  func start(secret: String) throws
+  func start(secret: String, usePrivateTrack: Bool, completion: @escaping (Result<Void, Error>) -> Void)
   func setEnabled(enabled: Bool, completion: @escaping (Result<Void, Error>) -> Void)
   func isEnabled(completion: @escaping (Result<Bool, Error>) -> Void)
   func isConfigured() throws -> Bool
   func getInstallId(completion: @escaping (Result<String, Error>) -> Void)
   func isRunningInAppCenterTestCloud() throws -> Bool
+  func setLogLevel(level: Int64, completion: @escaping (Result<Void, Error>) -> Void)
+  func fibonacci(n: Int64, completion: @escaping (Result<Int64, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -54,11 +56,14 @@ class AppCenterApiSetup {
       startChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let secretArg = args[0] as! String
-        do {
-          try api.start(secret: secretArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+        let usePrivateTrackArg = args[1] as! Bool
+        api.start(secret: secretArg, usePrivateTrack: usePrivateTrackArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
         }
       }
     } else {
@@ -136,6 +141,40 @@ class AppCenterApiSetup {
       }
     } else {
       isRunningInAppCenterTestCloudChannel.setMessageHandler(nil)
+    }
+    let setLogLevelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.AppCenterApi.setLogLevel", binaryMessenger: binaryMessenger)
+    if let api = api {
+      setLogLevelChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let levelArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        api.setLogLevel(level: levelArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      setLogLevelChannel.setMessageHandler(nil)
+    }
+    let fibonacciChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.AppCenterApi.fibonacci", binaryMessenger: binaryMessenger)
+    if let api = api {
+      fibonacciChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let nArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        api.fibonacci(n: nArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      fibonacciChannel.setMessageHandler(nil)
     }
   }
 }
@@ -381,6 +420,137 @@ class AppCenterCrashesApiSetup {
       }
     } else {
       trackExceptionChannel.setMessageHandler(nil)
+    }
+  }
+}
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol AppCenterDistributionApi {
+  func setDistributeEnabled(enabled: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+  func notifyDistributeUpdateAction(updateAction: Int64, completion: @escaping (Result<Void, Error>) -> Void)
+  func handleDistributeUpdateAction(updateAction: Int64, completion: @escaping (Result<Void, Error>) -> Void)
+  func setDistributeDebugEnabled(enabled: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+  func isDistributeEnabled(completion: @escaping (Result<Bool, Error>) -> Void)
+  func disableAutomaticCheckForUpdate(completion: @escaping (Result<Void, Error>) -> Void)
+  func checkForUpdates(completion: @escaping (Result<Void, Error>) -> Void)
+}
+
+/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
+class AppCenterDistributionApiSetup {
+  /// The codec used by AppCenterDistributionApi.
+  /// Sets up an instance of `AppCenterDistributionApi` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: AppCenterDistributionApi?) {
+    let setDistributeEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.AppCenterDistributionApi.setDistributeEnabled", binaryMessenger: binaryMessenger)
+    if let api = api {
+      setDistributeEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enabledArg = args[0] as! Bool
+        api.setDistributeEnabled(enabled: enabledArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      setDistributeEnabledChannel.setMessageHandler(nil)
+    }
+    let notifyDistributeUpdateActionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.AppCenterDistributionApi.notifyDistributeUpdateAction", binaryMessenger: binaryMessenger)
+    if let api = api {
+      notifyDistributeUpdateActionChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let updateActionArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        api.notifyDistributeUpdateAction(updateAction: updateActionArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      notifyDistributeUpdateActionChannel.setMessageHandler(nil)
+    }
+    let handleDistributeUpdateActionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.AppCenterDistributionApi.handleDistributeUpdateAction", binaryMessenger: binaryMessenger)
+    if let api = api {
+      handleDistributeUpdateActionChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let updateActionArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        api.handleDistributeUpdateAction(updateAction: updateActionArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      handleDistributeUpdateActionChannel.setMessageHandler(nil)
+    }
+    let setDistributeDebugEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.AppCenterDistributionApi.setDistributeDebugEnabled", binaryMessenger: binaryMessenger)
+    if let api = api {
+      setDistributeDebugEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enabledArg = args[0] as! Bool
+        api.setDistributeDebugEnabled(enabled: enabledArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      setDistributeDebugEnabledChannel.setMessageHandler(nil)
+    }
+    let isDistributeEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.AppCenterDistributionApi.isDistributeEnabled", binaryMessenger: binaryMessenger)
+    if let api = api {
+      isDistributeEnabledChannel.setMessageHandler { _, reply in
+        api.isDistributeEnabled() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      isDistributeEnabledChannel.setMessageHandler(nil)
+    }
+    let disableAutomaticCheckForUpdateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.AppCenterDistributionApi.disableAutomaticCheckForUpdate", binaryMessenger: binaryMessenger)
+    if let api = api {
+      disableAutomaticCheckForUpdateChannel.setMessageHandler { _, reply in
+        api.disableAutomaticCheckForUpdate() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      disableAutomaticCheckForUpdateChannel.setMessageHandler(nil)
+    }
+    let checkForUpdatesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.AppCenterDistributionApi.checkForUpdates", binaryMessenger: binaryMessenger)
+    if let api = api {
+      checkForUpdatesChannel.setMessageHandler { _, reply in
+        api.checkForUpdates() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      checkForUpdatesChannel.setMessageHandler(nil)
     }
   }
 }

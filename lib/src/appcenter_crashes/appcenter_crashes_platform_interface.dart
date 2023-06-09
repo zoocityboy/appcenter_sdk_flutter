@@ -1,4 +1,4 @@
-import 'package:appcenter_sdk_flutter/src/appcenter_crashes/appcenter_crashes_method_channel.dart';
+import 'package:appcenter/src/appcenter_crashes/appcenter_crashes_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 /// The interface that implementations of `appcenter_crashes` must extend.
@@ -6,8 +6,7 @@ abstract class AppCenterCrashesPlatformInterface extends PlatformInterface {
   /// Create an instance.
   AppCenterCrashesPlatformInterface() : super(token: _token);
 
-  static AppCenterCrashesPlatformInterface _instance =
-      AppCenterCrashesMethodChannel();
+  static AppCenterCrashesPlatformInterface _instance = AppCenterCrashesMethodChannel();
 
   static final Object _token = Object();
 
@@ -20,12 +19,10 @@ abstract class AppCenterCrashesPlatformInterface extends PlatformInterface {
   }
 
   /// Generates crash for test purpose.
-  Future<void> generateTestCrash() async =>
-      throw UnimplementedError('generateTestCrash has not been implemented.');
+  Future<void> generateTestCrash() async => throw UnimplementedError('generateTestCrash has not been implemented.');
 
   /// Check whether there was a memory warning in the last session.
-  Future<bool> hasReceivedMemoryWarningInLastSession() async =>
-      throw UnimplementedError(
+  Future<bool> hasReceivedMemoryWarningInLastSession() async => throw UnimplementedError(
         'hasReceivedMemoryWarningInLastSession has not been implemented.',
       );
 
@@ -35,16 +32,13 @@ abstract class AppCenterCrashesPlatformInterface extends PlatformInterface {
       );
 
   /// Enable Crashes service.
-  Future<void> enable() async =>
-      throw UnimplementedError('enable has not been implemented.');
+  Future<void> enable() async => throw UnimplementedError('enable has not been implemented.');
 
   /// Disable Crashes service.
-  Future<void> disable() async =>
-      throw UnimplementedError('disable has not been implemented.');
+  Future<void> disable() async => throw UnimplementedError('disable has not been implemented.');
 
   /// Check whether Crashes service is enabled or not.
-  Future<bool> isEnabled() async =>
-      throw UnimplementedError('isEnabled has not been implemented.');
+  Future<bool> isEnabled() async => throw UnimplementedError('isEnabled has not been implemented.');
 
   /// Send an handled exception.
   Future<void> trackException({

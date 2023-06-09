@@ -1,5 +1,6 @@
-import 'package:appcenter_sdk_flutter/src/appcenter/appcenter_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+
+import 'appcenter_method_channel.dart';
 
 /// The interface that implementations of `appcenter` must extend.
 abstract class AppCenterPlatformInterface extends PlatformInterface {
@@ -13,7 +14,7 @@ abstract class AppCenterPlatformInterface extends PlatformInterface {
   /// The current default [AppCenterPlatformInterface] instance.
   static AppCenterPlatformInterface get instance => _instance;
 
-  static set instance(final AppCenterPlatformInterface instance) {
+  static set instance(AppCenterPlatformInterface instance) {
     PlatformInterface.verify(instance, _token);
     _instance = instance;
   }
@@ -24,8 +25,15 @@ abstract class AppCenterPlatformInterface extends PlatformInterface {
   /// This may be called only once per application process lifetime.
   ///
   /// [secret] – A unique and secret key used to identify the application.
-  Future<void> start({required final String secret}) async =>
+  Future<void> start({
+    required String secret,
+    required bool usePrivateTrack,
+  }) async =>
       throw UnimplementedError('start has not been implemented.');
+
+  ///
+  Future<void> setLogLevel(int value) async =>
+      throw UnimplementedError('setLogLevel has not been implemented.');
 
   /// Enable the SDK as a whole.
   Future<void> enable() async =>
@@ -63,4 +71,10 @@ abstract class AppCenterPlatformInterface extends PlatformInterface {
       throw UnimplementedError(
         'isRunningInAppCenterTestCloud has not been implemented.',
       );
+
+  /// Check app performance on calculating fibonacci number
+  ///
+  /// only for testing purposes
+  Future<int> fibonacci(int n) async =>
+      throw UnimplementedError('fibonachi has not been implemented.');
 }

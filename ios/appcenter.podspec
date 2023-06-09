@@ -1,9 +1,9 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint appcenter_sdk_flutter.podspec` to validate before publishing.
+# Run `pod lib lint appcenter.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'appcenter_sdk_flutter'
+  s.name             = 'appcenter'
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter plugin project.'
   s.description      = <<-DESC
@@ -17,7 +17,8 @@ A new Flutter plugin project.
   s.dependency 'Flutter'
   
   # App center
-  s.dependency 'AppCenter'
+  s.dependency 'AppCenter', '~> 5.0.1'
+  s.dependency 'AppCenter/Distribute', '~> 5.0.1'
 
   s.ios.deployment_target = '11.0'
   s.static_framework = true

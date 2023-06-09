@@ -1,5 +1,6 @@
-import 'package:appcenter_sdk_flutter/src/appcenter_analytics/appcenter_analytics_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+
+import 'appcenter_analytics_method_channel.dart';
 
 /// The interface that implementations of `appcenter_analytics` must extend.
 abstract class AppCenterAnalyticsPlatformInterface extends PlatformInterface {

@@ -1,13 +1,11 @@
-import 'package:appcenter_sdk_flutter/src/appcenter_analytics/appcenter_analytics_platform_interface.dart';
-import 'package:appcenter_sdk_flutter/src/messages.g.dart';
+import 'package:appcenter/src/appcenter_analytics/appcenter_analytics_platform_interface.dart';
+import 'package:appcenter/src/messages.g.dart';
 import 'package:meta/meta.dart';
 
 /// The method channel implementation of [AppCenterAnalyticsPlatformInterface].
-class AppCenterAnalyticsMethodChannel
-    extends AppCenterAnalyticsPlatformInterface {
+class AppCenterAnalyticsMethodChannel extends AppCenterAnalyticsPlatformInterface {
   /// Creates a new [AppCenterAnalyticsMethodChannel] instance.
-  factory AppCenterAnalyticsMethodChannel() =>
-      AppCenterAnalyticsMethodChannel.internal(api: AppCenterAnalyticsApi());
+  factory AppCenterAnalyticsMethodChannel() => AppCenterAnalyticsMethodChannel.internal(api: AppCenterAnalyticsApi());
 
   /// Creates a new [AppCenterAnalyticsMethodChannel] instance for unit tests.
   @visibleForTesting
@@ -42,13 +40,11 @@ class AppCenterAnalyticsMethodChannel
   Future<bool> isEnabled() async => _api.analyticsIsEnabled();
 
   @override
-  Future<void> enableManualSessionTracker() async =>
-      _api.enableManualSessionTracker();
+  Future<void> enableManualSessionTracker() async => _api.enableManualSessionTracker();
 
   @override
   Future<void> startSession() async => _api.startSession();
 
   @override
-  Future<bool> setTransmissionInterval(final int seconds) async =>
-      _api.setTransmissionInterval(seconds);
+  Future<bool> setTransmissionInterval(final int seconds) async => _api.setTransmissionInterval(seconds);
 }

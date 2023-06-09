@@ -1,5 +1,5 @@
-import 'package:appcenter_sdk_flutter/appcenter_sdk_flutter.dart';
-import 'package:appcenter_sdk_flutter/src/appcenter/appcenter_method_channel.dart';
+import 'package:appcenter/appcenter.dart';
+import 'package:appcenter/src/appcenter/appcenter_method_channel.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -13,19 +13,17 @@ void main() {
     () {
       test('start', () async {
         final appCenterApi = AppCenterApiMock();
-        when(() => appCenterApi.start(any()))
-            .thenAnswer((final _) async => Future<void>);
+        when(() => appCenterApi.start(any(), any())).thenAnswer((final _) async => Future<void>);
         AppCenter.instance = AppCenterMethodChannel.internal(api: appCenterApi);
 
-        await AppCenter.start(secret: 'APP-SECRET');
+        await AppCenter.start(secret: 'APP-SECRET', usePrivateTrack: false);
 
-        verify(() => appCenterApi.start(any())).called(1);
+        verify(() => appCenterApi.start(any(), any())).called(1);
       });
 
       test('enable', () async {
         final api = AppCenterApiMock();
-        when(() => api.setEnabled(any()))
-            .thenAnswer((final _) async => Future<void>);
+        when(() => api.setEnabled(any())).thenAnswer((_) async => Future<void>);
         AppCenter.instance = AppCenterMethodChannel.internal(api: api);
 
         await AppCenter.enable();
@@ -35,8 +33,7 @@ void main() {
 
       test('disable', () async {
         final api = AppCenterApiMock();
-        when(() => api.setEnabled(any()))
-            .thenAnswer((final _) async => Future<void>);
+        when(() => api.setEnabled(any())).thenAnswer((_) async => Future<void>);
         AppCenter.instance = AppCenterMethodChannel.internal(api: api);
 
         await AppCenter.disable();
@@ -47,7 +44,7 @@ void main() {
       test('isEnabled return true', () async {
         final api = AppCenterApiMock();
         const expected = true;
-        when(api.isEnabled).thenAnswer((final _) async => expected);
+        when(api.isEnabled).thenAnswer((_) async => expected);
         AppCenter.instance = AppCenterMethodChannel.internal(api: api);
 
         final value = await AppCenter.isEnabled();
@@ -71,7 +68,7 @@ void main() {
       test('isConfigured return true', () async {
         final api = AppCenterApiMock();
         const expected = true;
-        when(api.isConfigured).thenAnswer((final _) async => expected);
+        when(api.isConfigured).thenAnswer((_) async => expected);
         AppCenter.instance = AppCenterMethodChannel.internal(api: api);
 
         final value = await AppCenter.isConfigured();
@@ -83,7 +80,7 @@ void main() {
       test('isConfigured return false', () async {
         final api = AppCenterApiMock();
         const expected = true;
-        when(api.isConfigured).thenAnswer((final _) async => expected);
+        when(api.isConfigured).thenAnswer((_) async => expected);
         AppCenter.instance = AppCenterMethodChannel.internal(api: api);
 
         final value = await AppCenter.isConfigured();
@@ -95,7 +92,7 @@ void main() {
       test('getInstallId', () async {
         final api = AppCenterApiMock();
         const expected = 'InstallId';
-        when(api.getInstallId).thenAnswer((final _) async => expected);
+        when(api.getInstallId).thenAnswer((_) async => expected);
         AppCenter.instance = AppCenterMethodChannel.internal(api: api);
 
         final value = await AppCenter.getInstallId();
@@ -107,8 +104,7 @@ void main() {
       test('isRunningInAppCenterTestCloud return true', () async {
         final api = AppCenterApiMock();
         const expected = true;
-        when(api.isRunningInAppCenterTestCloud)
-            .thenAnswer((final _) async => expected);
+        when(api.isRunningInAppCenterTestCloud).thenAnswer((final _) async => expected);
         AppCenter.instance = AppCenterMethodChannel.internal(api: api);
 
         final value = await AppCenter.isRunningInAppCenterTestCloud();
@@ -120,8 +116,7 @@ void main() {
       test('isRunningInAppCenterTestCloud return false', () async {
         final api = AppCenterApiMock();
         const expected = false;
-        when(api.isRunningInAppCenterTestCloud)
-            .thenAnswer((final _) async => expected);
+        when(api.isRunningInAppCenterTestCloud).thenAnswer((final _) async => expected);
         AppCenter.instance = AppCenterMethodChannel.internal(api: api);
 
         final value = await AppCenter.isRunningInAppCenterTestCloud();

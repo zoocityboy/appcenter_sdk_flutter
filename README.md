@@ -1,11 +1,18 @@
 # App Center SDK for Flutter
+[![madeby: zoocityboy][madeby_badge]][madeby_link]
+[![License: MIT][license_badge]][license_link]
+[![style: ZOO Lints][zoo_lints_badge]][zoo_lints_link]
+![Flutter][flutter_badge]
+![Kotlin][kotlin_badge]
+![Swift][swift_badge]
 
-This package supports only the **Analytics** and **Crashes** parts of the sdk.
+
+This package supports only the **Analytics**, **Crashes** and **Distribute** parts of the sdk.
 
 ## Usage
 
 ```dart
-import 'package:appcenter_sdk_flutter/appcenter_sdk_flutter.dart';
+import 'package:appcenter/appcenter.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
@@ -95,4 +102,21 @@ When using the `trackException`, the flutter stack trace will appear in App Cent
 ## Pigeon
 
 Since I always forget the command, I noted it here.
-`flutter pub run pigeon --input pigeons/messages.dart`
+```bash
+dart run pigeon \
+  --input pigeons/messages.dart \
+  --dart_out lib/src/messages.g.dart \
+  --swift_out ios/Classes/Messages.g.swift \
+  --kotlin_out android/src/main/kotlin/zoo/cityboy/appcenter/Messages.g.kt \
+  --kotlin_package "zoo.cityboy.appcenter"
+```
+[coverage_badge]: https://img.shields.io/badge/coverage-100-3EB489.svg?style=flat-square
+[madeby_badge]: https://img.shields.io/badge/made_by-ZOOCITYBOY-blue?style=flat-square
+[madeby_link]: https://github.com/zoocityboy
+[zoo_lints_badge]: https://img.shields.io/badge/lints-ZOO-3EB489.svg?style=flat-square
+[zoo_lints_link]: https://pub.dev/packages/zoo_lints
+[license_badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+[license_link]: https://opensource.org/licenses/EIT
+[flutter_badge]:https://img.shields.io/badge/Flutter-%2302569B.svg?style=flat-square&logo=Flutter&logoColor=white
+[kotlin_badge]:https://img.shields.io/badge/kotlin-%237F52FF.svg?style=flat-square&logo=kotlin&logoColor=white
+[swift_badge]:https://img.shields.io/badge/swift-F54A2A?style=flat-square&logo=swift&logoColor=white

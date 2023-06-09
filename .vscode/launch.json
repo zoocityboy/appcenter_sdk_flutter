@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "appcenter_sdk_flutter",
+            "name": "appcenter",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "appcenter_sdk_flutter (profile mode)",
+            "name": "appcenter (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "appcenter_sdk_flutter (release mode)",
+            "name": "appcenter (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
@@ -25,21 +25,45 @@
             "name": "example",
             "cwd": "example",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "development"
+            ],
+            "toolArgs": [
+                "--dart-define-from-file",
+                ".env.json"
+            ]
         },
         {
             "name": "example (profile mode)",
             "cwd": "example",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "args": [
+                "--flavor",
+                "development"
+            ],
+            "toolArgs": [
+                "--dart-define-from-file",
+                ".env.json"
+            ]
         },
         {
             "name": "example (release mode)",
             "cwd": "example",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "development"
+            ],
+            "toolArgs": [
+                "--dart-define-from-file",
+                ".env.json"
+            ]
         }
     ]
 }

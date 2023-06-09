@@ -4,11 +4,11 @@ import AppCenter
 import AppCenterAnalytics
 import AppCenterCrashes
 
-public class SwiftAppCenterSdkFlutterPlugin: NSObject, FlutterPlugin, AppCenterApi, AppCenterAnalyticsApi, AppCenterCrashesApi {
+public class SwiftAppCenterPlugin: NSObject, FlutterPlugin, AppCenterApi, AppCenterAnalyticsApi, AppCenterCrashesApi {
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let binaryMessenger = registrar.messenger()
-        let appCenterPlugin = SwiftAppCenterSdkFlutterPlugin()
+        let appCenterPlugin = SwiftAppCenterPlugin()
         AppCenterApiSetup.setUp(binaryMessenger: binaryMessenger, api: appCenterPlugin)
         AppCenterAnalyticsApiSetup.setUp(binaryMessenger: binaryMessenger, api: appCenterPlugin)
         AppCenterCrashesApiSetup.setUp(binaryMessenger: binaryMessenger, api: appCenterPlugin)
