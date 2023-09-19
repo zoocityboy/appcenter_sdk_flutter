@@ -1,9 +1,14 @@
 // ignore_for_file: avoid-top-level-members-in-tests, prefer-match-file-name
-import 'package:appcenter/src/messages.g.dart';
-import 'package:mocktail/mocktail.dart';
 
-class AppCenterApiMock extends Mock implements AppCenterApi {}
+import 'package:flutter/services.dart';
+import 'package:mockito/mockito.dart';
 
-class AppCenterAnalyticsApiMock extends Mock implements AppCenterAnalyticsApi {}
+class MockEventChannel extends Mock implements EventChannel {}
 
-class AppCenterCrashesApiMock extends Mock implements AppCenterCrashesApi {}
+// class MockAppCenterApi extends Mock implements AppCenterApi {}
+
+// class MockAnalyticsApi extends Mock implements AnalyticsApi {}
+
+// class MockCrashesApi extends Mock implements CrashesApi {}
+
+// class MockDistributeApi extends Mock implements DistributeApi {}

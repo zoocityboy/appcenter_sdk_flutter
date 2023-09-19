@@ -71,10 +71,4 @@ abstract class AppCenterPlatformInterface extends PlatformInterface {
       throw UnimplementedError(
         'isRunningInAppCenterTestCloud has not been implemented.',
       );
-
-  /// Check app performance on calculating fibonacci number
-  ///
-  /// only for testing purposes
-  Future<int> fibonacci(int n) async =>
-      throw UnimplementedError('fibonachi has not been implemented.');
 }

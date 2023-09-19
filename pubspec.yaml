@@ -4,21 +4,22 @@ version: 0.5.1
 repository: https://github.com/zoocityboy/appcenter
 
 environment:
-  sdk: ">=2.18.0"
-  flutter: ">=2.5.0"
+  sdk: ">=3.0.0"
+  flutter: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  meta: ^1.9.1 # flutter_test from sdk depends on meta 1.8.0
-  plugin_platform_interface: ^2.1.4
+  meta: ^1.9.1
+  plugin_platform_interface: ^2.1.6
 
 dev_dependencies:
+  build_runner: ^2.4.6
   flutter_test:
     sdk: flutter
-  mocktail: ^0.3.0
-  pigeon: ^10.0.0
-  zoo_lints: ^2.0.1
+  mockito: ^5.4.2
+  pigeon: ^10.1.6
+  zoo_lints: ^3.0.0
 
 flutter:
   plugin:

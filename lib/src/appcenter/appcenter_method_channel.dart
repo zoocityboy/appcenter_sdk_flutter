@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-import '../messages.g.dart';
+import '../appcenter.g.dart';
 import 'appcenter_platform_interface.dart';
 
 /// The method channel implementation of [AppCenterPlatformInterface].
@@ -44,6 +44,4 @@ class AppCenterMethodChannel extends AppCenterPlatformInterface {
   Future<bool> isRunningInAppCenterTestCloud() async =>
       _api.isRunningInAppCenterTestCloud();
 
-  @override
-  Future<int> fibonacci(int n) async => _api.fibonacci(n);
 }

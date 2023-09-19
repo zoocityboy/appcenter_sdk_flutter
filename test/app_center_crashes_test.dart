@@ -1,126 +1,121 @@
 import 'package:appcenter/appcenter.dart';
-import 'package:appcenter/src/appcenter_crashes/appcenter_crashes_method_channel.dart';
+import 'package:appcenter/src/crashes.g.dart';
+import 'package:appcenter/src/crashes/appcenter_crashes_method_channel.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
-import 'helpers/mocks.dart';
+import 'app_center_crashes_test.mocks.dart';
 
+@GenerateMocks([CrashesApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group(
     'AppCenterCrashes',
     () {
+      late final CrashesApi api;
+      setUpAll(() {
+        api = MockCrashesApi();
+        Crashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+      });
       test('generateTestCrash', () async {
-        final api = AppCenterCrashesApiMock();
-        when(api.generateTestCrash).thenAnswer((final _) async => Future<void>);
-        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.generateTestCrash())
+            .thenAnswer((_) async => Future<void>.value());
 
-        await AppCenterCrashes.generateTestCrash();
+        await Crashes.generateTestCrash();
 
-        verify(api.generateTestCrash).called(1);
+        verify(api.generateTestCrash()).called(1);
       });
 
       test('hasReceivedMemoryWarningInLastSession return true', () async {
-        final api = AppCenterCrashesApiMock();
         const expected = true;
-        when(api.hasReceivedMemoryWarningInLastSession).thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.hasReceivedMemoryWarningInLastSession())
+            .thenAnswer((_) async => expected);
 
-        final value = await AppCenterCrashes.hasReceivedMemoryWarningInLastSession();
+        final value = await Crashes.hasReceivedMemoryWarningInLastSession();
 
         expect(value, expected);
-        verify(api.hasReceivedMemoryWarningInLastSession).called(1);
+        verify(api.hasReceivedMemoryWarningInLastSession()).called(1);
       });
 
       test('hasReceivedMemoryWarningInLastSession return false', () async {
-        final api = AppCenterCrashesApiMock();
         const expected = false;
-        when(api.hasReceivedMemoryWarningInLastSession).thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.hasReceivedMemoryWarningInLastSession())
+            .thenAnswer((_) async => expected);
 
-        final value = await AppCenterCrashes.hasReceivedMemoryWarningInLastSession();
+        final value = await Crashes.hasReceivedMemoryWarningInLastSession();
 
         expect(value, expected);
-        verify(api.hasReceivedMemoryWarningInLastSession).called(1);
+        verify(api.hasReceivedMemoryWarningInLastSession()).called(1);
       });
 
       test('hasCrashedInLastSession return true', () async {
-        final api = AppCenterCrashesApiMock();
         const expected = true;
-        when(api.hasCrashedInLastSession).thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.hasCrashedInLastSession()).thenAnswer((_) async => expected);
 
-        final value = await AppCenterCrashes.hasCrashedInLastSession();
+        final value = await Crashes.hasCrashedInLastSession();
 
         expect(value, expected);
-        verify(api.hasCrashedInLastSession).called(1);
+        verify(api.hasCrashedInLastSession()).called(1);
       });
 
       test('hasCrashedInLastSession return false', () async {
-        final api = AppCenterCrashesApiMock();
         const expected = false;
-        when(api.hasCrashedInLastSession).thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.hasCrashedInLastSession()).thenAnswer((_) async => expected);
 
-        final value = await AppCenterCrashes.hasCrashedInLastSession();
+        final value = await Crashes.hasCrashedInLastSession();
 
         expect(value, expected);
-        verify(api.hasCrashedInLastSession).called(1);
+        verify(api.hasCrashedInLastSession()).called(1);
       });
 
       test('enable', () async {
-        final api = AppCenterCrashesApiMock();
-        when(() => api.crashesSetEnabled(any())).thenAnswer((final _) async => Future<void>);
-        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.crashesSetEnabled(true))
+            .thenAnswer((_) async => Future<void>.value());
 
-        await AppCenterCrashes.enable();
+        await Crashes.enable();
 
-        verify(() => api.crashesSetEnabled(true)).called(1);
+        verify(api.crashesSetEnabled(true)).called(1);
       });
 
       test('disable', () async {
-        final api = AppCenterCrashesApiMock();
-        when(() => api.crashesSetEnabled(any())).thenAnswer((final _) async => Future<void>);
-        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.crashesSetEnabled(true))
+            .thenAnswer((_) async => Future<void>.value());
 
-        await AppCenterCrashes.disable();
+        await Crashes.disable();
 
-        verify(() => api.crashesSetEnabled(false)).called(1);
+        verify(api.crashesSetEnabled(false)).called(1);
       });
 
       test('isEnabled return true', () async {
-        final api = AppCenterCrashesApiMock();
         const expected = true;
-        when(api.crashesIsEnabled).thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.crashesIsEnabled()).thenAnswer((_) async => expected);
 
-        final value = await AppCenterCrashes.isEnabled();
+        final value = await Crashes.isEnabled();
 
         expect(value, expected);
-        verify(api.crashesIsEnabled).called(1);
+        verify(api.crashesIsEnabled()).called(1);
       });
 
       test('isEnabled return false', () async {
-        final api = AppCenterCrashesApiMock();
         const expected = false;
-        when(api.crashesIsEnabled).thenAnswer((final _) async => expected);
-        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.crashesIsEnabled()).thenAnswer((_) async => expected);
+        Crashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
 
-        final value = await AppCenterCrashes.isEnabled();
+        final value = await Crashes.isEnabled();
 
         expect(value, expected);
-        verify(api.crashesIsEnabled).called(1);
+        verify(api.crashesIsEnabled()).called(1);
       });
 
       test('trackException', () async {
-        final api = AppCenterCrashesApiMock();
-        when(() => api.trackException(any(), any(), any(), any())).thenAnswer((final _) async => Future<void>);
-        AppCenterCrashes.instance = AppCenterCrashesMethodChannel.internal(api: api);
+        when(api.trackException('any', any, any, any))
+            .thenAnswer((_) async => Future<void>.value());
 
         final exception = Exception('Message');
         const stackTraceString = 'I am a stack trace.';
-        await AppCenterCrashes.trackException(
+        await Crashes.trackException(
           message: exception.toString(),
           type: exception.runtimeType,
           stackTrace: StackTrace.fromString(stackTraceString),
@@ -128,7 +123,7 @@ void main() {
         );
 
         verify(
-          () => api.trackException(
+          api.trackException(
             exception.toString(),
             exception.runtimeType.toString(),
             stackTraceString,

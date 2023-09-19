@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:appcenter/appcenter.dart';
 import 'package:faker/faker.dart';
@@ -7,101 +8,61 @@ import 'package:flutter/material.dart';
 
 import 'key_extension.dart';
 
-final secret = String.fromEnvironment('APP_CENTER_SECRET',
-    defaultValue: '0bbc01a5-32e2-4d49-ba9b-10f1729ba3a7');
+final secret = Platform.isIOS
+    ? String.fromEnvironment('APP_CENTER_IOS_SECRET',
+        defaultValue: 'b908f428-53a7-486a-a265-30a8df5ba12e')
+    : String.fromEnvironment('APP_CENTER_ANDROID_SECRET',
+        defaultValue: '0bbc01a5-32e2-4d49-ba9b-10f1729ba3a7');
 late String instanceId;
 final Stopwatch watch = Stopwatch()..start();
 Future<void> main() async {
-  void listener(dynamic value) {
-    print(value);
-  }
-
   print('secret: $secret');
   print('meseurament: start ${watch.elapsedMicroseconds}');
   WidgetsFlutterBinding.ensureInitialized();
   FlutterError.onError = (final details) async {
-    await AppCenterCrashes.trackException(
+    await Crashes.trackException(
       message: details.exception.toString(),
       type: details.exception.runtimeType,
       stackTrace: details.stack,
     );
   };
-  await AppCenter.start(
+  AppCenter.start(
     secret: secret,
     usePrivateTrack: false,
-  );
+  ).then((value) {
+    print('meseurament: end ${watch.elapsedMicroseconds}');
+    Distribution.setDistributeEnable(value: true);
+    AppCenter.isRunningInAppCenterTestCloud().then(
+      (value) => print('isRunningInAppCenterTestCloud: $value'),
+    );
+    AppCenter.getInstallId().then(
+      (value) => instanceId = value,
+    );
 
-  AppCenter.isRunningInAppCenterTestCloud().then(
-    (value) => print('isRunningInAppCenterTestCloud: $value'),
-  );
+    Crashes.isEnabled().then(
+      (value) => print('isEnabled: $value'),
+    );
+    Crashes.hasCrashedInLastSession().then(
+      (value) => print('hasCrashedInLastSession: $value'),
+    );
+    Analytics.isEnabled().then(
+      (value) => print('isEnabled: $value'),
+    );
+    Analytics.setTransmissionInterval(10).then(
+      (value) => print('setTransmissionInterval: $value'),
+    );
+    Distribution.setDistributeDebugEnable(value: true).then(
+      (value) => print('setDistributeDebugEnable: true'),
+    );
+  });
 
-  AppCenterCrashes.isEnabled().then(
-    (value) => print('isEnabled: $value'),
-  );
-  AppCenterCrashes.hasCrashedInLastSession().then(
-    (value) => print('hasCrashedInLastSession: $value'),
-  );
-  AppCenterAnalytics.isEnabled().then(
-    (value) => print('isEnabled: $value'),
-  );
-  AppCenterAnalytics.setTransmissionInterval(10).then(
-    (value) => print('setTransmissionInterval: $value'),
-  );
-  AppCenterDistribution.setDistributeDebugEnable(value: true).then(
-    (value) => print('setDistributeDebugEnable: true'),
-  );
-  AppCenterDistribution.onDistributeUpdateStream.listen(listener);
   runApp(const MyApp());
 }
 
 /// MyApp widget.
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   /// Initializes [key].
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    // unawaited(AppCenter.start(
-    //   secret: secret,
-    //   usePrivateTrack: false,
-    // ).then(
-    //   (value) {
-    //     print('meseurament: AppCenter initialzed ${watch.elapsedMicroseconds}');
-    //     AppCenter.getInstallId()
-    //         .then((value) => instanceId = value)
-    //         .catchError((e, s) => instanceId = '');
-    //     AppCenter.isRunningInAppCenterTestCloud().then(
-    //       (value) => print('isRunningInAppCenterTestCloud: $value'),
-    //     );
-
-    //     AppCenterCrashes.isEnabled().then(
-    //       (value) => print('isEnabled: $value'),
-    //     );
-    //     AppCenterCrashes.hasCrashedInLastSession().then(
-    //       (value) => print('hasCrashedInLastSession: $value'),
-    //     );
-    //     AppCenterAnalytics.isEnabled().then(
-    //       (value) => print('isEnabled: $value'),
-    //     );
-    //     AppCenterAnalytics.setTransmissionInterval(10).then(
-    //       (value) => print('setTransmissionInterval: $value'),
-    //     );
-    //     AppCenterDistribution.setDistributeDebugEnable(value: true).then(
-    //       (value) => print('setDistributeDebugEnable: true'),
-    //     );
-    //     AppCenterDistribution.onDistributeUpdateStream.listen(listener);
-    //   },
-    // ));
-    // AppCenter.getInstallId()
-    //     .then((value) => instanceId = value)
-    //     .catchError((e, s) => instanceId = '');
-  }
 
   @override
   Widget build(final BuildContext context) {
@@ -124,13 +85,82 @@ class Page extends StatefulWidget {
 }
 
 class _PageState extends State<Page> {
+  late final StreamSubscription<dynamic> subscription;
   @override
   void initState() {
     print('meseurament: Page init ${watch.elapsedMicroseconds}');
     super.initState();
+    getInstanceId();
+    subscription = Distribution.onDistributeUpdateStream.listen((data) {
+      print('onDistributeUpdateStream: $data');
+      if (mounted) {
+        if (data != null)
+          showDialog<UpdateAction>(
+            context: context,
+            barrierDismissible: !data.isMandatoryUpdate,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                  icon: Icon(
+                    Icons.update_rounded,
+                  ),
+                  iconPadding: EdgeInsets.all(16),
+                  title: const Text('AppCenter'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(data.releaseNotes ??
+                          'Release Notes are not available'),
+                      Divider(),
+                      TextButton(child: const Text('Notes'), onPressed: () {}),
+                    ],
+                  ),
+                  actionsOverflowButtonSpacing: 8,
+                  actionsAlignment: MainAxisAlignment.end,
+                  actions: [
+                    if (!data.isMandatoryUpdate)
+                      TextButton(
+                          child: const Text('Postpone'),
+                          onPressed: () {
+                            Navigator.of(context).pop(UpdateAction.postpone);
+                          }),
+                    TextButton(
+                        child: const Text('Update'),
+                        onPressed: () {
+                          Navigator.of(context).pop(UpdateAction.update);
+                        })
+                  ]);
+            },
+            useSafeArea: true,
+          ).then((value) {
+            if (value == null) return;
+            if (value == UpdateAction.cancel) {
+            } else {
+              Distribution.handleDistributeUpdateAction(
+                  updateAction: value.value);
+            }
+
+            ///
+          }, onError: (error) {
+            ///
+          });
+      }
+    });
   }
 
   bool inProgress = false;
+  String instanceId = '';
+  void getInstanceId() async {
+    AppCenter.getInstallId().then(
+      (value) => setState(() => instanceId = value),
+    );
+  }
+
+  @override
+  void dispose() {
+    print('meseurament: Page dispose ${watch.elapsedMicroseconds}');
+    subscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,27 +201,24 @@ class _PageState extends State<Page> {
                   subtitleTextStyle: Theme.of(context).textTheme.labelLarge,
                   child: ListTile(
                       title: Text('INSTANCEID'),
-                      subtitle: FutureBuilder<String>(
-                        key: Key('installId'),
-                        future: AppCenter.getInstallId(),
-                        builder: (final context, final snapshot) => Text(
-                          '${snapshot.data ?? ''}',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
+                      subtitle: Text(
+                        '${instanceId}',
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       trailing: StatefulBuilder(
                         builder: (context, setState) {
-                          Future<void> calculateFibonaci() async {
-                            setState(() => inProgress = true);
-                            await AppCenter.fibonacci(50);
-                            setState(() => inProgress = false);
-                          }
+                          // Future<void> calculateFibonaci() async {
+                          //   setState(() => inProgress = true);
+                          //   await AppCenter.fibonacci(50);
+                          //   setState(() => inProgress = false);
+                          // }
 
                           return inProgress
                               ? CircularProgressIndicator()
                               : IconButton(
                                   icon: Icon(Icons.refresh_outlined),
-                                  onPressed: calculateFibonaci,
+                                  // onPressed: calculateFibonaci,
+                                  onPressed: () {},
                                 );
                         },
                       )),
@@ -217,7 +244,7 @@ class _PageState extends State<Page> {
                 CardButton(
                   key: Key('trackException'),
                   onPressed: (identity) {
-                    unawaited(AppCenterAnalytics.trackEvent(
+                    unawaited(Analytics.trackEvent(
                         name: 'trackExcpetion',
                         properties: {
                           'event': 'onPressed',
@@ -231,14 +258,14 @@ class _PageState extends State<Page> {
                 CardButton(
                   key: Key('crashButton2'),
                   onPressed: (identity) {
-                    unawaited(AppCenterAnalytics.trackEvent(
+                    unawaited(Analytics.trackEvent(
                         name: 'generateTestCrash',
                         properties: {
                           'event': 'onPressed',
                           'instanceId': instanceId,
                           'widget': identity
                         }));
-                    unawaited(AppCenterCrashes.generateTestCrash());
+                    unawaited(Crashes.generateTestCrash());
                   },
                   child: const Text('GenerateTestCrash'),
                 ),
@@ -262,38 +289,30 @@ class _PageState extends State<Page> {
                 CardButton(
                   key: Key('analyticsButton1'),
                   onPressed: (identity) {
-                    unawaited(AppCenterAnalytics.trackEvent(
-                        name: 'customEvent1',
-                        properties: {
-                          'animal': Faker().animal.name(),
-                          'color': Faker().color.color(),
-                          'name': Faker().person.name(),
-                          'age': Faker()
-                              .randomGenerator
-                              .numbers(98, 20)
-                              .toString(),
-                          'instanceId': instanceId,
-                          'widget': identity
-                        }));
+                    unawaited(
+                        Analytics.trackEvent(name: 'customEvent1', properties: {
+                      'animal': Faker().animal.name(),
+                      'color': Faker().color.color(),
+                      'name': Faker().person.name(),
+                      'age': Faker().randomGenerator.numbers(98, 20).toString(),
+                      'instanceId': instanceId,
+                      'widget': identity
+                    }));
                   },
                   child: const Text('Custom Event 1'),
                 ),
                 CardButton(
                   key: Key('analyticsButton2'),
                   onPressed: (identity) {
-                    unawaited(AppCenterAnalytics.trackEvent(
-                        name: 'customEvent2',
-                        properties: {
-                          'animal': Faker().animal.name(),
-                          'color': Faker().color.color(),
-                          'name': Faker().person.name(),
-                          'age': Faker()
-                              .randomGenerator
-                              .numbers(98, 20)
-                              .toString(),
-                          'instanceId': instanceId,
-                          'widget': identity
-                        }));
+                    unawaited(
+                        Analytics.trackEvent(name: 'customEvent2', properties: {
+                      'animal': Faker().animal.name(),
+                      'color': Faker().color.color(),
+                      'name': Faker().person.name(),
+                      'age': Faker().randomGenerator.numbers(98, 20).toString(),
+                      'instanceId': instanceId,
+                      'widget': identity
+                    }));
                   },
                   child: const Text('Custom Event 2'),
                 ),
@@ -317,26 +336,26 @@ class _PageState extends State<Page> {
                 CardButton(
                   key: Key('distributeButton1'),
                   onPressed: (identity) {
-                    unawaited(AppCenterAnalytics.trackEvent(
+                    unawaited(Analytics.trackEvent(
                         name: 'checkUpdate',
                         properties: {
                           'instanceId': instanceId,
                           'widget': identity
                         }));
-                    unawaited(AppCenterDistribution.checkForUpdates());
+                    unawaited(Distribution.checkForUpdates());
                   },
                   child: const Text('Check Update'),
                 ),
                 CardButton(
                   key: Key('distributeButton2'),
                   onPressed: (identity) {
-                    unawaited(AppCenterAnalytics.trackEvent(
-                        name: 'checkUpdate',
-                        properties: {
-                          'instanceId': instanceId,
-                          'widget': identity
-                        }));
-                    unawaited(AppCenterDistribution.checkForUpdates());
+                    // unawaited(AppCenterAnalytics.trackEvent(
+                    //     name: 'checkUpdate',
+                    //     properties: {
+                    //       'instanceId': instanceId,
+                    //       'widget': identity
+                    //     }));
+                    unawaited(Distribution.checkForUpdates());
                   },
                   child: const Text('Check Update'),
                 ),
@@ -367,6 +386,7 @@ class CardButton extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return Card(
+      clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(

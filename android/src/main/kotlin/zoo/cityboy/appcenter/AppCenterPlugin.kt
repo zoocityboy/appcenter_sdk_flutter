@@ -1,13 +1,18 @@
 package zoo.cityboy.appcenter
 
 
+import android.R
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.WorkerThread
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
@@ -15,107 +20,158 @@ import com.microsoft.appcenter.crashes.WrapperSdkExceptionManager
 import com.microsoft.appcenter.distribute.Distribute
 import com.microsoft.appcenter.distribute.DistributeListener
 import com.microsoft.appcenter.distribute.ReleaseDetails
+import com.microsoft.appcenter.distribute.UpdateAction
 import com.microsoft.appcenter.distribute.UpdateTrack
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.EventChannel.EventSink
-import io.flutter.plugin.common.EventChannel.StreamHandler
+import zoo.cityboy.appcenter.analytics.AnalyticsApi
+import zoo.cityboy.appcenter.appcenter.AppCenterApi
+import zoo.cityboy.appcenter.crashes.CrashesApi
+import zoo.cityboy.appcenter.distribute.DistributeApi
 import java.util.Date
 
 
 /** AppCenterPlugin */
-class AppCenterPlugin : FlutterPlugin, ActivityAware, AppCenterApi, AppCenterAnalyticsApi, AppCenterCrashesApi, AppCenterDistributionApi {
+class AppCenterPlugin : FlutterPlugin, ActivityAware, AppCenterApi, AnalyticsApi, CrashesApi, DistributeApi{
 
     private var events = mutableMapOf<String, Date>()
     private var mainActivity: Activity? = null
     private lateinit var preferences: SharedPreferences
-    private lateinit var mEventChannel: EventChannel
+    private var mEventChannel: EventChannel? = null
     private var mEvents: EventSink? = null
     private var uiThreadHandler: Handler = Handler(Looper.getMainLooper())
 
+    override fun onAttachedToEngine(p0: FlutterPluginBinding) {
 
+        p0.applicationContext.getSharedPreferences("AppCenterFlutter", Context.MODE_PRIVATE)
+        events["onAttachedToEngine_start"] = Date()
+        AppCenterApi.setUp(p0.binaryMessenger, this)
+        AnalyticsApi.setUp(p0.binaryMessenger, this)
+        CrashesApi.setUp(p0.binaryMessenger, this)
+        DistributeApi.setUp(p0.binaryMessenger, this)
+        events["onAttachedToEngine_done"] = Date()
 
-    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        binding.applicationContext.getSharedPreferences("AppCenterFlutter", Context.MODE_PRIVATE)
-        mEventChannel = EventChannel(binding.binaryMessenger, "zoo.cityboy.appcenter/distribute_events")
-        mEventChannel.setStreamHandler (object : StreamHandler {
-            override fun onListen(arguments: Any?, es: EventSink) {
-                mEvents = es
+        mEventChannel =
+            EventChannel(p0.binaryMessenger, "zoo.cityboy.appcenter/distribute_events")
+        mEventChannel?.setStreamHandler(object : EventChannel.StreamHandler {
+            override fun onListen(arguments: Any?, events: EventSink) {
+                println("onListen $arguments -> $events")
+                mEvents = events
             }
+
             override fun onCancel(arguments: Any?) {
+                println("onCancel -> $arguments")
+
                 mEvents = null
             }
         })
-
-        events.put("onAttachedToEngine_start", Date())
-        AppCenterApi.setUp(binding.binaryMessenger, this)
-        AppCenterAnalyticsApi.setUp(binding.binaryMessenger, this)
-        AppCenterCrashesApi.setUp(binding.binaryMessenger, this)
-        AppCenterDistributionApi.setUp(binding.binaryMessenger, this)
-        events.put("onAttachedToEngine_done", Date())
     }
 
-    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        AppCenterApi.setUp(binding.binaryMessenger, null)
-        AppCenterAnalyticsApi.setUp(binding.binaryMessenger, null)
-        AppCenterCrashesApi.setUp(binding.binaryMessenger, null)
-        AppCenterDistributionApi.setUp(binding.binaryMessenger, this)
+    override fun onDetachedFromEngine(p0: FlutterPluginBinding) {
+        events["onDetachedFromEngine_start"] = Date()
+        mEventChannel?.setStreamHandler(null)
+        mEventChannel = null
+        AppCenterApi.setUp(p0.binaryMessenger, null)
+        AnalyticsApi.setUp(p0.binaryMessenger, null)
+        CrashesApi.setUp(p0.binaryMessenger, null)
+        DistributeApi.setUp(p0.binaryMessenger, null)
     }
 
-    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        events.put("onAttachedToActivity_start", Date())
-        mainActivity = binding.activity
-        preferences = binding.activity.getSharedPreferences("AppCenterFlutter", Context.MODE_PRIVATE);
+    override fun onAttachedToActivity(p0: ActivityPluginBinding) {
+        events["onAttachedToActivity_start"] = Date()
+        mainActivity = p0.activity
+        preferences =
+            p0.activity.getSharedPreferences("AppCenterFlutter", Context.MODE_PRIVATE);
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
+        events["onDetachedFromActivityForConfigChanges"] = Date()
         mainActivity = null
     }
 
-    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    override fun onReattachedToActivityForConfigChanges(p0: ActivityPluginBinding) {
+
         events["onReattachedToActivityForConfigChanges"] = Date()
-        mainActivity = binding.activity
-        preferences = binding.activity.getSharedPreferences("AppCenterFlutter", Context.MODE_PRIVATE);
+        mainActivity = p0.activity
+        preferences =
+            p0.activity.getSharedPreferences("AppCenterFlutter", Context.MODE_PRIVATE);
+        
     }
 
     override fun onDetachedFromActivity() {
         mainActivity = null
-        mEventChannel.setStreamHandler(null)
-
+        events["onDetachedFromActivity"] = Date()
     }
 
     // App Center
     override fun start(secret: String, usePrivateTrack: Boolean, callback: (Result<Unit>) -> Unit) {
         events["AppCenterStart"] = Date()
-        mainActivity?.let {
+        mainActivity?.let { it ->
             if (!AppCenter.isConfigured()) {
                 if (usePrivateTrack){
                     Distribute.setUpdateTrack(UpdateTrack.PRIVATE);
                 }
-                Distribute.setListener(object : DistributeListener {
+                Distribute.setEnabled(true)
+                Distribute.setEnabledForDebuggableBuild(true)
+                Distribute.setListener(
+                        object : DistributeListener {
+                            override fun onNoReleaseAvailable(activity: Activity?) {
+                                println("Distribute: onNoReleaseAvailable")
+                                uiThreadHandler.post { mEvents?.success(null) }
+                            }
+                            override fun onReleaseAvailable(
+                                    activity: Activity?,
+                                    releaseDetails: ReleaseDetails?
+                            ): Boolean {
+                                releaseDetails?.let {detail ->
+                                    try{
+                                       val converted = mapOf<String, Any?>(
+                                           "id" to detail.id.toInt(),
+                                           "version" to detail.version.toInt(),
+                                           "shortVersion" to detail.shortVersion.toString(),
+                                           "size" to detail.size.toInt(),
+                                           "releaseDetails" to detail.releaseNotes?.toString(),
+                                           "releaseNotesUrl" to detail.releaseNotesUrl?.toString(),
+                                           "minApiLevel" to 23,
+                                           "downloadUrl" to detail.downloadUrl.toString(),
+                                           "isMandatoryUpdate" to detail.isMandatoryUpdate,
+                                           "releaseHash" to detail.releaseHash.toString(),
+                                           "distributionGroupId" to
+                                            detail.distributionGroupId.toString(),
+                                       )
+                                        println("[kt] Distribute: onReleaseAvailable $converted")
 
+                                        uiThreadHandler.post { mEvents?.success(converted) }
 
-                    override fun onNoReleaseAvailable(activity: Activity?) {
-                        uiThreadHandler.post {
-                            mEvents?.success("onNoReleaseAvailable")
+                                    } catch (e: Exception){
+                                        println("error: ${e.message}")
+                                        uiThreadHandler.post { mEvents?.success(null) }
+
+                                        return false
+                                    }
+
+                                 } ?: {
+                                    println("Distribute: onReleaseAvailable $releaseDetails")
+                                    uiThreadHandler.post { mEvents?.success(null) }
+                                 }
+                                
+                                
+                                
+                                return releaseDetails != null
+                            }
                         }
-                    }
+                )
 
-                    override fun onReleaseAvailable(
-                        activity: Activity?,
-                        releaseDetails: ReleaseDetails?
-                    ): Boolean {
-                        uiThreadHandler.post {
-                            mEvents?.success("onReleaseAvailable")
-                        }
-                        return releaseDetails != null
-                    }
-                })
+                
                 AppCenter.setLogLevel(Log.VERBOSE)
+                Analytics.setTransmissionInterval(15)
                 AppCenter.start(it.application, secret, Analytics::class.java, Crashes::class.java, Distribute::class.java)
                 events["AppCenterStart_done"] = Date()
+             
             }
 
             println("start: ${AppCenter.isConfigured()}")
@@ -128,24 +184,6 @@ class AppCenterPlugin : FlutterPlugin, ActivityAware, AppCenterApi, AppCenterAna
         AppCenter.setLogLevel(level.toInt())
     }
 
-    override fun fibonacci(n: Long, callback: (Result<Long>)-> Unit) {
-        println("fibonacci: $n")
-
-        val value = n.toInt()
-        val result = fibonacciCalc(value)
-        println("fibonacci: done $result")
-        callback(Result.success(result.toLong()))
-
-    }
-    @WorkerThread
-    fun fibonacciCalc(n: Int): Int {
-        if (n == 0 || n == 1) {
-            return n
-        }
-        print("fibonacciCalc $n ")
-
-        return fibonacciCalc(n - 1) + fibonacciCalc(n - 2)
-    }
 
     override fun setEnabled(enabled: Boolean, callback: (Result<Unit>) -> Unit) {
         println("setEnabled: $enabled")
@@ -180,6 +218,10 @@ class AppCenterPlugin : FlutterPlugin, ActivityAware, AppCenterApi, AppCenterAna
         } else {
             Analytics.trackEvent(name, properties)
         }
+    }
+
+    override fun trackPage(name: String, properties: Map<String, String>?) {
+        
     }
 
     override fun pause() {
@@ -257,7 +299,7 @@ class AppCenterPlugin : FlutterPlugin, ActivityAware, AppCenterApi, AppCenterAna
         exceptionModel.message = message
         exceptionModel.type = type
         exceptionModel.stackTrace = stackTrace
-        exceptionModel.wrapperSdkName = "appcenter.react-native"
+        exceptionModel.wrapperSdkName = "appcenter.flutter"
         WrapperSdkExceptionManager.trackException(exceptionModel, properties, null)
     }
     // App Center Crashes
@@ -273,16 +315,15 @@ class AppCenterPlugin : FlutterPlugin, ActivityAware, AppCenterApi, AppCenterAna
     }
 
     override fun setDistributeDebugEnabled(enabled: Boolean, callback: (Result<Unit>) -> Unit) {
-        Distribute.setEnabledForDebuggableBuild(enabled)
+       
         println("setEnabledForDebuggableBuild: $enabled")
-
+        Distribute.setEnabledForDebuggableBuild(enabled)
         callback(Result.success(Unit))
     }
 
     override fun isDistributeEnabled(callback: (Result<Boolean>) -> Unit) {
         Distribute.isEnabled().thenAccept { value -> 
             println("isDistributeEnabled: $value")
-
             callback(Result.success(value)) 
         }
     }
@@ -298,10 +339,13 @@ class AppCenterPlugin : FlutterPlugin, ActivityAware, AppCenterApi, AppCenterAna
 
     override fun checkForUpdates(callback: (Result<Unit>) -> Unit) {
         Distribute.checkForUpdate()
-        print("checkForUpdate")
+        println("checkForUpdate")
         callback(Result.success(Unit))
     }
 
+    override fun ifExistsReleaseDetails(): zoo.cityboy.appcenter.distribute.ReleaseDetails? {
+        return null
+    }
 
     override fun notifyDistributeUpdateAction(updateAction: Long, callback: (Result<Unit>) -> Unit) {
         Distribute.notifyUpdateAction(updateAction.toInt())
@@ -314,5 +358,4 @@ class AppCenterPlugin : FlutterPlugin, ActivityAware, AppCenterApi, AppCenterAna
         println("notifyUpdateAction: $updateAction")
         callback(Result.success(Unit))
     }
-
 }

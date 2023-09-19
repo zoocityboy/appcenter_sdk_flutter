@@ -18,3 +18,7 @@ pubspec.lock
 .packages
 build
 coverage
+example
+pigeons
+test
+run.sh

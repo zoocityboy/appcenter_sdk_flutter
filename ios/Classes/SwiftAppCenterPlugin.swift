@@ -12,12 +12,13 @@ public class SwiftAppCenterPlugin: NSObject, FlutterPlugin, AppCenterApi, AppCen
         AppCenterApiSetup.setUp(binaryMessenger: binaryMessenger, api: appCenterPlugin)
         AppCenterAnalyticsApiSetup.setUp(binaryMessenger: binaryMessenger, api: appCenterPlugin)
         AppCenterCrashesApiSetup.setUp(binaryMessenger: binaryMessenger, api: appCenterPlugin)
+        AppCenterDistributeApiSetup.setUp(binaryMessenger: binaryMessenger, api: appCenterPlugin)
     }
     
     // AppCenter
     func start(secret: String) {
         if (!AppCenter.isConfigured){
-            AppCenter.start(withAppSecret: secret, services: [Analytics.self, Crashes.self])
+            AppCenter.start(withAppSecret: secret, services: [Analytics.self, Crashes.self, Distribute.self])
         }
     }
     
@@ -108,7 +109,7 @@ public class SwiftAppCenterPlugin: NSObject, FlutterPlugin, AppCenterApi, AppCen
         exceptionModel.message = message
         exceptionModel.type = type
         exceptionModel.stackTrace = stackTrace
-        exceptionModel.wrapperSdkName = "appcenter.xamarin"
+        exceptionModel.wrapperSdkName = "appcenter.flutter"
         Crashes.trackException(exceptionModel, properties: properties, attachments: nil)
     }
     // AppCenter Crashes

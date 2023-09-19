@@ -64,16 +64,18 @@ android {
 }
 
 dependencies {
-    def appCenterSdkVersion = '5.0.1'
+    def appCenterSdkVersion = '5.0.2'
     implementation "com.microsoft.appcenter:appcenter-analytics:$appCenterSdkVersion"
     implementation "com.microsoft.appcenter:appcenter-crashes:$appCenterSdkVersion"
     developmentImplementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
     stagingImplementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
     productionImplementation "com.microsoft.appcenter:appcenter-distribute-play:${appCenterSdkVersion}"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
 
-    if (System.env.FLUTTER_ROOT != null) {
-        println "System property: " + System.getProperty("os.arch")
-        println "FLUTTER_ROOT: $System.env.FLUTTER_ROOT"
-        debugCompileOnly files(System.env.FLUTTER_ROOT + "/bin/cache/artifacts/engine/android-arm64/flutter.jar")
-    }
+    // if (System.env.FLUTTER_ROOT != null) {
+    //     println "System property: " + System.getProperty("os.arch")
+    //     println "FLUTTER_ROOT: $System.env.FLUTTER_ROOT"
+    //     debugCompileOnly files(System.env.FLUTTER_ROOT + "/bin/cache/artifacts/engine/android-arm64/flutter.jar")
+    // }
 }

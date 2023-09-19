@@ -61,10 +61,4 @@ class AppCenter {
   /// test dependencies in release).
   static Future<bool> isRunningInAppCenterTestCloud() =>
       AppCenterPlatformInterface.instance.isRunningInAppCenterTestCloud();
-
-  /// Check app performance on calculating fibonacci number
-  ///
-  /// only for testing purposes
-  static Future<int> fibonacci(int n) =>
-      AppCenterPlatformInterface.instance.fibonacci(n);
 }
