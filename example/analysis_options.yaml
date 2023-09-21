@@ -1,0 +1,7 @@
+include: package:eit_lints/analysis_options.yaml
+# analyzer:
+#   exclude:
+#     - test/**
+linter:
+  rules:
+    public_member_api_docs: false

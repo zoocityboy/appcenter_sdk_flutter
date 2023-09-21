@@ -1,0 +1,9 @@
+{
+    "STAGE": "development",
+    "APP_NAME": "Example",
+    "APP_SUFFIX": ".dev",
+    "BASE_URL": "http://localhos:9010/",
+    "MOCK": true,
+    "APP_CENTER_ANDROID_SECRET": "ef57adec-8fc2-415a-bbf7-ba77fd9bc127",
+    "APP_CENTER_IOS_SECRET": "dc30b668-55df-4ae4-aedb-548e43ef8cbb"
+}
