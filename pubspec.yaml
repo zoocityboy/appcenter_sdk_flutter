@@ -2,7 +2,7 @@ name: appcenter_sdk
 description: Development plugin for the App Center Analytics, Crashes & Distribution for Flutter
 version: 1.0.0
 repository: https://github.com/zoocityboy/appcenter_sdk
-publish_to: https://gitea.prntes.space/api/packages/platform/pub/
+publish_to: https://gitea.xops.cz/api/packages/platform/pub/
 
 environment:
   sdk: ^3.1.0
